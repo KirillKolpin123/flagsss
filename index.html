@@ -5,118 +5,96 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Угадай флаг</title>
     <style>
-        body { text-align: center; font-family: Arial, sans-serif; background-color: #f4f4f4; }
-        .container { max-width: 400px; margin: 0 auto; background: white; padding: 20px; border-radius: 10px; box-shadow: 0 0 10px rgba(0, 0, 0, 0.2); }
-        h1, h3 { color: #333; }
-        img { width: 250px; margin: 20px; border-radius: 10px; }
-        button { padding: 10px; margin: 10px; font-size: 18px; cursor: pointer; border: none; border-radius: 5px; background: #008CBA; color: white; transition: 0.3s; }
-        button:hover { background: #005f75; }
-        #timer { font-size: 20px; color: red; }
-        .hidden { display: none; }
+        body {
+            font-family: Arial, sans-serif;
+            text-align: center;
+            background: url('https://upload.wikimedia.org/wikipedia/commons/thumb/e/ec/World_map_blank_without_borders.svg/2000px-World_map_blank_without_borders.svg.png') no-repeat center center fixed;
+            background-size: cover;
+            color: white;
+        }
+        .menu, .game {
+            display: none;
+        }
+        .btn {
+            padding: 10px 20px;
+            font-size: 18px;
+            margin: 10px;
+            cursor: pointer;
+        }
+        .correct {
+            background-color: green;
+        }
+        .incorrect {
+            background-color: red;
+        }
     </style>
-    <script>
-        const flags = {
-            "Россия": "https://flagcdn.com/w320/ru.png",
-            "США": "https://flagcdn.com/w320/us.png",
-            "Германия": "https://flagcdn.com/w320/de.png",
-            "Франция": "https://flagcdn.com/w320/fr.png",
-            "Италия": "https://flagcdn.com/w320/it.png",
-            "Испания": "https://flagcdn.com/w320/es.png",
-            "Китай": "https://flagcdn.com/w320/cn.png",
-            "Япония": "https://flagcdn.com/w320/jp.png",
-            "Бразилия": "https://flagcdn.com/w320/br.png",
-            "Канада": "https://flagcdn.com/w320/ca.png",
-            "Индия": "https://flagcdn.com/w320/in.png",
-            "Мексика": "https://flagcdn.com/w320/mx.png",
-            "Аргентина": "https://flagcdn.com/w320/ar.png",
-            "Турция": "https://flagcdn.com/w320/tr.png",
-            "Южная Корея": "https://flagcdn.com/w320/kr.png",
-            "Австралия": "https://flagcdn.com/w320/au.png",
-            "Великобритания": "https://flagcdn.com/w320/gb.png",
-            "Швеция": "https://flagcdn.com/w320/se.png",
-            "Нидерланды": "https://flagcdn.com/w320/nl.png",
-            "Швейцария": "https://flagcdn.com/w320/ch.png"
-        };
-
-        let correctCountry = "";
-        let score = 0;
-        let timer;
-        let timeLeft = 10;
-
-        function startGame() {
-            document.getElementById("menu").classList.add("hidden");
-            document.getElementById("game").classList.remove("hidden");
-            score = 0;
-            loadFlag();
-        }
-
-        function loadFlag() {
-            timeLeft = 10;
-            document.getElementById("timer").innerText = `⏳ ${timeLeft} сек.`;
-            clearInterval(timer);
-            timer = setInterval(countdown, 1000);
-
-            const countries = Object.keys(flags);
-            correctCountry = countries[Math.floor(Math.random() * countries.length)];
-            document.getElementById("flag").src = flags[correctCountry];
-
-            const options = [correctCountry];
-            while (options.length < 4) {
-                let randomCountry = countries[Math.floor(Math.random() * countries.length)];
-                if (!options.includes(randomCountry)) {
-                    options.push(randomCountry);
-                }
-            }
-
-            options.sort(() => Math.random() - 0.5);
-            for (let i = 0; i < 4; i++) {
-                document.getElementById(`btn${i+1}`).innerText = options[i];
-            }
-        }
-
-        function countdown() {
-            timeLeft--;
-            document.getElementById("timer").innerText = `⏳ ${timeLeft} сек.`;
-            if (timeLeft <= 0) {
-                clearInterval(timer);
-                alert("⏳ Время вышло! Это был " + correctCountry);
-                score = 0;
-                startGame();
-            }
-        }
-
-        function checkAnswer(answer) {
-            clearInterval(timer);
-            if (answer === correctCountry) {
-                score++;
-                alert("✅ Правильно! Очки: " + score);
-            } else {
-                alert("❌ Ошибка! Это был " + correctCountry);
-                score = 0;
-            }
-            loadFlag();
-        }
-    </script>
 </head>
 <body>
-    <div class="container">
-        <div id="menu">
-            <h1>Угадай флаг</h1>
-            <button onclick="startGame()">🎮 Начать игру</button>
-            <button onclick="alert('Рекорды скоро появятся!')">🏆 Рекорды</button>
-            <button onclick="alert('Игра про флаги мира!')">ℹ️ О игре</button>
-        </div>
-
-        <div id="game" class="hidden">
-            <h3 id="timer">⏳ 10 сек.</h3>
-            <img id="flag" src="" alt="Флаг">
-            <br>
-            <button id="btn1" onclick="checkAnswer(this.innerText)"></button>
-            <button id="btn2" onclick="checkAnswer(this.innerText)"></button>
-            <br>
-            <button id="btn3" onclick="checkAnswer(this.innerText)"></button>
-            <button id="btn4" onclick="checkAnswer(this.innerText)"></button>
-        </div>
+    <div id="menu" class="menu">
+        <h1>Угадай флаг</h1>
+        <button class="btn" onclick="startGame()">Играть</button>
     </div>
+    <div id="game" class="game">
+        <h2 id="level-title">Уровень 1</h2>
+        <img id="flag" src="" alt="Флаг" width="300">
+        <div id="options"></div>
+        <p id="score">Очки: 0 | Жизни: 3</p>
+    </div>
+    <script>
+        let flags = [
+            { country: "Россия", src: "https://flagcdn.com/w320/ru.png" },
+            { country: "США", src: "https://flagcdn.com/w320/us.png" },
+            { country: "Франция", src: "https://flagcdn.com/w320/fr.png" },
+            { country: "Германия", src: "https://flagcdn.com/w320/de.png" },
+            { country: "Италия", src: "https://flagcdn.com/w320/it.png" },
+            { country: "Великобритания", src: "https://flagcdn.com/w320/gb.png" },
+            { country: "Канада", src: "https://flagcdn.com/w320/ca.png" },
+            { country: "Китай", src: "https://flagcdn.com/w320/cn.png" },
+            { country: "Япония", src: "https://flagcdn.com/w320/jp.png" },
+            { country: "Индия", src: "https://flagcdn.com/w320/in.png" },
+            { country: "Бразилия", src: "https://flagcdn.com/w320/br.png" },
+            { country: "Австралия", src: "https://flagcdn.com/w320/au.png" },
+            { country: "Испания", src: "https://flagcdn.com/w320/es.png" },
+            { country: "Мексика", src: "https://flagcdn.com/w320/mx.png" },
+            { country: "Южная Корея", src: "https://flagcdn.com/w320/kr.png" },
+            { country: "Аргентина", src: "https://flagcdn.com/w320/ar.png" },
+            { country: "ЮАР", src: "https://flagcdn.com/w320/za.png" },
+            { country: "Турция", src: "https://flagcdn.com/w320/tr.png" },
+            { country: "Швеция", src: "https://flagcdn.com/w320/se.png" },
+            { country: "Норвегия", src: "https://flagcdn.com/w320/no.png" },
+            { country: "Финляндия", src: "https://flagcdn.com/w320/fi.png" },
+            { country: "Дания", src: "https://flagcdn.com/w320/dk.png" },
+            { country: "Швейцария", src: "https://flagcdn.com/w320/ch.png" },
+            { country: "Австрия", src: "https://flagcdn.com/w320/at.png" },
+            { country: "Нидерланды", src: "https://flagcdn.com/w320/nl.png" },
+            { country: "Бельгия", src: "https://flagcdn.com/w320/be.png" },
+            { country: "Польша", src: "https://flagcdn.com/w320/pl.png" },
+            { country: "Португалия", src: "https://flagcdn.com/w320/pt.png" },
+            { country: "Чехия", src: "https://flagcdn.com/w320/cz.png" },
+            { country: "Греция", src: "https://flagcdn.com/w320/gr.png" },
+            { country: "Венгрия", src: "https://flagcdn.com/w320/hu.png" },
+            { country: "Румыния", src: "https://flagcdn.com/w320/ro.png" },
+            { country: "Болгария", src: "https://flagcdn.com/w320/bg.png" },
+            { country: "Ирландия", src: "https://flagcdn.com/w320/ie.png" },
+            { country: "Словакия", src: "https://flagcdn.com/w320/sk.png" },
+            { country: "Словения", src: "https://flagcdn.com/w320/si.png" },
+            { country: "Сербия", src: "https://flagcdn.com/w320/rs.png" },
+            { country: "Хорватия", src: "https://flagcdn.com/w320/hr.png" },
+            { country: "Украина", src: "https://flagcdn.com/w320/ua.png" },
+            { country: "Беларусь", src: "https://flagcdn.com/w320/by.png" },
+            { country: "Эстония", src: "https://flagcdn.com/w320/ee.png" },
+            { country: "Латвия", src: "https://flagcdn.com/w320/lv.png" },
+            { country: "Литва", src: "https://flagcdn.com/w320/lt.png" }
+        ];
+        
+        let currentLevel = 1, currentScore = 0, lives = 3, usedFlags = [];
+        const flagsPerLevel = 15;
+        
+        function startGame() {
+            document.getElementById('menu').style.display = 'none';
+            document.getElementById('game').style.display = 'block';
+            nextFlag();
+        }
+    </script>
 </body>
 </html>
