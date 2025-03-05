@@ -10,90 +10,285 @@
             text-align: center;
             background: url('https://upload.wikimedia.org/wikipedia/commons/thumb/e/ec/World_map_blank_without_borders.svg/2000px-World_map_blank_without_borders.svg.png') no-repeat center center fixed;
             background-size: cover;
-            color: white;
+            color: black;
         }
-        .menu, .game {
-            display: none;
+        .menu {
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+            height: 100vh;
         }
         .btn {
-            padding: 10px 20px;
-            font-size: 18px;
+            padding: 15px 30px;
+            font-size: 20px;
             margin: 10px;
             cursor: pointer;
+            display: block;
+            width: 200px;
+            text-align: center;
+        }
+        .game {
+            display: none;
         }
         .correct {
             background-color: green;
+            color: white;
         }
         .incorrect {
             background-color: red;
+            color: white;
+        }
+        #options {
+            display: flex;
+            justify-content: center;
+            flex-wrap: wrap;
+        }
+        #options button {
+            margin: 5px;
+        }
+        #score {
+            font-size: 20px;
+            margin-top: 20px;
+        }
+        #game-over {
+            font-size: 24px;
+            color: red;
+            margin-top: 20px;
         }
     </style>
 </head>
 <body>
     <div id="menu" class="menu">
         <h1>Угадай флаг</h1>
-        <button class="btn" onclick="startGame()">Играть</button>
+        <button class="btn" onclick="startGame('europe')">🇪🇺 Европа</button>
+        <button class="btn" onclick="startGame('asia')">🌏 Азия</button>
+        <button class="btn" onclick="startGame('africa')">🌍 Африка</button>
+        <button class="btn" onclick="startGame('southAmerica')">🌴 Южная Америка</button>
+        <button class="btn" onclick="startGame('northAmerica')">🌎 Северная Америка</button>
+        <button class="btn" onclick="startGame('oceania')">🌊 Океания</button>
     </div>
     <div id="game" class="game">
-        <h2 id="level-title">Уровень 1</h2>
+        <h2 id="level-title">Уровень</h2>
         <img id="flag" src="" alt="Флаг" width="300">
         <div id="options"></div>
         <p id="score">Очки: 0 | Жизни: 3</p>
+        <p id="game-over"></p>
+        <button class="btn" onclick="returnToMenu()">⬅ Вернуться в меню</button>
     </div>
+
     <script>
-        let flags = [
-            { country: "Россия", src: "https://flagcdn.com/w320/ru.png" },
-            { country: "США", src: "https://flagcdn.com/w320/us.png" },
-            { country: "Франция", src: "https://flagcdn.com/w320/fr.png" },
-            { country: "Германия", src: "https://flagcdn.com/w320/de.png" },
-            { country: "Италия", src: "https://flagcdn.com/w320/it.png" },
-            { country: "Великобритания", src: "https://flagcdn.com/w320/gb.png" },
-            { country: "Канада", src: "https://flagcdn.com/w320/ca.png" },
-            { country: "Китай", src: "https://flagcdn.com/w320/cn.png" },
-            { country: "Япония", src: "https://flagcdn.com/w320/jp.png" },
-            { country: "Индия", src: "https://flagcdn.com/w320/in.png" },
-            { country: "Бразилия", src: "https://flagcdn.com/w320/br.png" },
-            { country: "Австралия", src: "https://flagcdn.com/w320/au.png" },
-            { country: "Испания", src: "https://flagcdn.com/w320/es.png" },
-            { country: "Мексика", src: "https://flagcdn.com/w320/mx.png" },
-            { country: "Южная Корея", src: "https://flagcdn.com/w320/kr.png" },
-            { country: "Аргентина", src: "https://flagcdn.com/w320/ar.png" },
-            { country: "ЮАР", src: "https://flagcdn.com/w320/za.png" },
-            { country: "Турция", src: "https://flagcdn.com/w320/tr.png" },
-            { country: "Швеция", src: "https://flagcdn.com/w320/se.png" },
-            { country: "Норвегия", src: "https://flagcdn.com/w320/no.png" },
-            { country: "Финляндия", src: "https://flagcdn.com/w320/fi.png" },
-            { country: "Дания", src: "https://flagcdn.com/w320/dk.png" },
-            { country: "Швейцария", src: "https://flagcdn.com/w320/ch.png" },
-            { country: "Австрия", src: "https://flagcdn.com/w320/at.png" },
-            { country: "Нидерланды", src: "https://flagcdn.com/w320/nl.png" },
-            { country: "Бельгия", src: "https://flagcdn.com/w320/be.png" },
-            { country: "Польша", src: "https://flagcdn.com/w320/pl.png" },
-            { country: "Португалия", src: "https://flagcdn.com/w320/pt.png" },
-            { country: "Чехия", src: "https://flagcdn.com/w320/cz.png" },
-            { country: "Греция", src: "https://flagcdn.com/w320/gr.png" },
-            { country: "Венгрия", src: "https://flagcdn.com/w320/hu.png" },
-            { country: "Румыния", src: "https://flagcdn.com/w320/ro.png" },
-            { country: "Болгария", src: "https://flagcdn.com/w320/bg.png" },
-            { country: "Ирландия", src: "https://flagcdn.com/w320/ie.png" },
-            { country: "Словакия", src: "https://flagcdn.com/w320/sk.png" },
-            { country: "Словения", src: "https://flagcdn.com/w320/si.png" },
-            { country: "Сербия", src: "https://flagcdn.com/w320/rs.png" },
-            { country: "Хорватия", src: "https://flagcdn.com/w320/hr.png" },
-            { country: "Украина", src: "https://flagcdn.com/w320/ua.png" },
-            { country: "Беларусь", src: "https://flagcdn.com/w320/by.png" },
-            { country: "Эстония", src: "https://flagcdn.com/w320/ee.png" },
-            { country: "Латвия", src: "https://flagcdn.com/w320/lv.png" },
-            { country: "Литва", src: "https://flagcdn.com/w320/lt.png" }
-        ];
+        let currentScore = 0;
+        let lives = 3;
+        let currentRegion = "";
         
-        let currentLevel = 1, currentScore = 0, lives = 3, usedFlags = [];
-        const flagsPerLevel = 15;
-        
-        function startGame() {
-            document.getElementById('menu').style.display = 'none';
-            document.getElementById('game').style.display = 'block';
-            nextFlag();
+        const flags = {
+            europe: [
+                { country: "Австрия", src: "https://upload.wikimedia.org/wikipedia/commons/4/41/Flag_of_Austria.svg" },
+                { country: "Германия", src: "https://upload.wikimedia.org/wikipedia/commons/b/ba/Flag_of_Germany.svg" },
+                { country: "Франция", src: "https://upload.wikimedia.org/wikipedia/commons/c/c3/Flag_of_France.svg" },
+                { country: "Италия", src: "https://upload.wikimedia.org/wikipedia/commons/0/03/Flag_of_Italy.svg" },
+                { country: "Испания", src: "https://upload.wikimedia.org/wikipedia/commons/9/9a/Flag_of_Spain.svg" },
+                { country: "Португалия", src: "https://upload.wikimedia.org/wikipedia/commons/5/5c/Flag_of_Portugal.svg" },
+                { country: "Бельгия", src: "https://upload.wikimedia.org/wikipedia/commons/9/92/Flag_of_Belgium_%28civil%29.svg" },
+                { country: "Нидерланды", src: "https://upload.wikimedia.org/wikipedia/commons/2/20/Flag_of_the_Netherlands.svg" },
+                { country: "Швейцария", src: "https://upload.wikimedia.org/wikipedia/commons/f/f3/Flag_of_Switzerland.svg" },
+                { country: "Швеция", src: "https://upload.wikimedia.org/wikipedia/commons/4/4c/Flag_of_Sweden.svg" },
+                { country: "Норвегия", src: "https://upload.wikimedia.org/wikipedia/commons/d/d9/Flag_of_Norway.svg" },
+                { country: "Дания", src: "https://upload.wikimedia.org/wikipedia/commons/9/9c/Flag_of_Denmark.svg" },
+                { country: "Польша", src: "https://upload.wikimedia.org/wikipedia/commons/1/12/Flag_of_Poland.svg" },
+                { country: "Греция", src: "https://upload.wikimedia.org/wikipedia/commons/5/5c/Flag_of_Greece.svg" },
+                { country: "Финляндия", src: "https://upload.wikimedia.org/wikipedia/commons/b/bc/Flag_of_Finland.svg" }
+            ],
+            asia: [
+                { country: "Китай", src: "https://upload.wikimedia.org/wikipedia/commons/f/fa/Flag_of_the_People%27s_Republic_of_China.svg" },
+                { country: "Индия", src: "https://upload.wikimedia.org/wikipedia/commons/4/41/Flag_of_India.svg" },
+                { country: "Япония", src: "https://upload.wikimedia.org/wikipedia/commons/9/9e/Flag_of_Japan.svg" },
+                { country: "Южная Корея", src: "https://upload.wikimedia.org/wikipedia/commons/0/09/Flag_of_South_Korea.svg" },
+                { country: "Индонезия", src: "https://upload.wikimedia.org/wikipedia/commons/9/9f/Flag_of_Indonesia.svg" },
+                { country: "Пакистан", src: "https://upload.wikimedia.org/wikipedia/commons/3/32/Flag_of_Pakistan.svg" },
+                { country: "Иран", src: "https://upload.wikimedia.org/wikipedia/commons/c/ca/Flag_of_Iran.svg" },
+                { country: "Монголия", src: "https://upload.wikimedia.org/wikipedia/commons/4/4c/Flag_of_Mongolia.svg" },
+                { country: "Бангладеш", src: "https://upload.wikimedia.org/wikipedia/commons/f/f9/Flag_of_Bangladesh.svg" },
+                { country: "Турция", src: "https://upload.wikimedia.org/wikipedia/commons/b/b4/Flag_of_Turkey.svg" },
+                { country: "Вьетнам", src: "https://upload.wikimedia.org/wikipedia/commons/2/21/Flag_of_Vietnam.svg" },
+                { country: "Филиппины", src: "https://upload.wikimedia.org/wikipedia/commons/9/99/Flag_of_the_Philippines.svg" },
+                { country: "Сирия", src: "https://upload.wikimedia.org/wikipedia/commons/b/b8/Flag_of_Syria_%281930%E2%80%931958%2C_1961%E2%80%931963%29.svg" },
+                { country: "Ирак", src: "https://upload.wikimedia.org/wikipedia/commons/f/f6/Flag_of_Iraq.svg" }
+            ],
+            africa: [
+                { country: "Нигерия", src: "https://upload.wikimedia.org/wikipedia/commons/7/79/Flag_of_Nigeria.svg" },
+                { country: "Южноафриканская Республика", src: "https://upload.wikimedia.org/wikipedia/commons/a/af/Flag_of_South_Africa.svg" },
+                { country: "Египет", src: "https://upload.wikimedia.org/wikipedia/commons/f/fe/Flag_of_Egypt.svg" },
+                { country: "Эфиопия", src: "https://upload.wikimedia.org/wikipedia/commons/7/71/Flag_of_Ethiopia.svg" },
+                { country: "Кения", src: "https://upload.wikimedia.org/wikipedia/commons/4/49/Flag_of_Kenya.svg" },
+                { country: "Судан", src: "https://upload.wikimedia.org/wikipedia/commons/0/01/Flag_of_Sudan.svg" },
+                { country: "Алжир", src: "https://upload.wikimedia.org/wikipedia/commons/7/77/Flag_of_Algeria.svg" },
+                { country: "Мозамбик", src: "https://upload.wikimedia.org/wikipedia/commons/d/d0/Flag_of_Mozambique.svg" },
+                { country: "Гана", src: "https://upload.wikimedia.org/wikipedia/commons/1/19/Flag_of_Ghana.svg" },
+                { country: "Кот-д'Ивуар", src: "https://upload.wikimedia.org/wikipedia/commons/f/fe/Flag_of_C%C3%B4te_d%27Ivoire.svg" },
+                { country: "Габон", src: "https://upload.wikimedia.org/wikipedia/commons/0/04/Flag_of_Gabon.svg" },
+                { country: "Гвинея", src: "https://upload.wikimedia.org/wikipedia/commons/e/ed/Flag_of_Guinea.svg" },
+                { country: "Мали", src: "https://upload.wikimedia.org/wikipedia/commons/9/92/Flag_of_Mali.svg" },
+                { country: "Ливия", src: "https://upload.wikimedia.org/wikipedia/commons/0/05/Flag_of_Libya.svg" }
+            ],
+            southAmerica: [
+                { country: "Бразилия", src: "https://upload.wikimedia.org/wikipedia/commons/0/05/Flag_of_Brazil.svg" },
+                { country: "Аргентина", src: "https://upload.wikimedia.org/wikipedia/commons/1/1a/Flag_of_Argentina.svg" },
+                { country: "Колумбия", src: "https://upload.wikimedia.org/wikipedia/commons/2/21/Flag_of_Colombia.svg" },
+                { country: "Чили", src: "https://upload.wikimedia.org/wikipedia/commons/7/78/Flag_of_Chile.svg" },
+                { country: "Перу", src: "https://upload.wikimedia.org/wikipedia/commons/c/cf/Flag_of_Peru.svg" },
+                { country: "Венесуэла", src: "https://upload.wikimedia.org/wikipedia/commons/0/06/Flag_of_Venezuela.svg" },
+                { country: "Эквадор", src: "https://upload.wikimedia.org/wikipedia/commons/e/e8/Flag_of_Ecuador.svg" },
+                { country: "Парагвай", src: "https://upload.wikimedia.org/wikipedia/commons/2/27/Flag_of_Paraguay.svg" },
+                { country: "Боливия", src: "https://upload.wikimedia.org/wikipedia/commons/4/48/Flag_of_Bolivia.svg" },
+                { country: "Уругвай", src: "https://upload.wikimedia.org/wikipedia/commons/f/fe/Flag_of_Uruguay.svg" },
+                { country: "Суринам", src: "https://upload.wikimedia.org/wikipedia/commons/6/60/Flag_of_Suriname.svg" },
+                { country: "Гайана", src: "https://upload.wikimedia.org/wikipedia/commons/9/99/Flag_of_Guyana.svg" },
+                { country: "Французская Гвиана", src: "https://upload.wikimedia.org/wikipedia/commons/2/29/Flag_of_French_Guiana.svg" },
+                { country: "Сент-Люсия", src: "https://upload.wikimedia.org/wikipedia/commons/9/9f/Flag_of_Saint_Lucia.svg" }
+            ],
+            northAmerica: [
+                { country: "США", src: "https://upload.wikimedia.org/wikipedia/commons/a/a4/Flag_of_the_United_States.svg" },
+                { country: "Канада", src: "https://upload.wikimedia.org/wikipedia/commons/c/cf/Flag_of_Canada.svg" },
+                { country: "Мексика", src: "https://upload.wikimedia.org/wikipedia/commons/f/fc/Flag_of_Mexico.svg" },
+                { country: "Гренада", src: "https://upload.wikimedia.org/wikipedia/commons/b/bc/Flag_of_Grenada.svg" },
+                { country: "Гаити", src: "https://upload.wikimedia.org/wikipedia/commons/5/56/Flag_of_Haiti.svg" },
+                { country: "Коста-Рика", src: "https://upload.wikimedia.org/wikipedia/commons/f/f2/Flag_of_Costa_Rica.svg" },
+                { country: "Гондурас", src: "https://upload.wikimedia.org/wikipedia/commons/8/82/Flag_of_Honduras.svg" },
+                { country: "Никарагуа", src: "http://upload.wikimedia.org/wikipedia/commons/1/19/Flag_of_Nicaragua.svg" },
+                { country: "Панама", src: "https://upload.wikimedia.org/wikipedia/commons/a/ab/Flag_of_Panama.svg" },
+                { country: "Сальвадор", src: "https://upload.wikimedia.org/wikipedia/commons/3/34/Flag_of_El_Salvador.svg" },
+                { country: "Белиз", src: "https://upload.wikimedia.org/wikipedia/commons/e/e7/Flag_of_Belize.svg" },
+                { country: "Барбадос", src: "https://upload.wikimedia.org/wikipedia/commons/e/ef/Flag_of_Barbados.svg" },
+                { country: "Ямайка", src: "https://upload.wikimedia.org/wikipedia/commons/0/0a/Flag_of_Jamaica.svg" },
+                { country: "Тринидад и Тобаго", src: "https://upload.wikimedia.org/wikipedia/commons/6/64/Flag_of_Trinidad_and_Tobago.svg" }
+            ],
+            oceania: [
+                { country: "Австралия", src: "https://upload.wikimedia.org/wikipedia/commons/b/b9/Flag_of_Australia.svg" },
+                { country: "Новая Зеландия", src: "https://upload.wikimedia.org/wikipedia/commons/3/3e/Flag_of_New_Zealand.svg" },
+                { country: "Папуа-Новая Гвинея", src: "https://upload.wikimedia.org/wikipedia/commons/e/e3/Flag_of_Papua_New_Guinea.svg" },
+                { country: "Фиджи", src: "https://upload.wikimedia.org/wikipedia/commons/b/ba/Flag_of_Fiji.svg" },
+                { country: "Самоа", src: "https://upload.wikimedia.org/wikipedia/commons/3/31/Flag_of_Samoa.svg" },
+                { country: "Тонга", src: "https://upload.wikimedia.org/wikipedia/commons/9/9a/Flag_of_Tonga.svg" },
+                { country: "Вануату", src: "https://upload.wikimedia.org/wikipedia/commons/b/bc/Flag_of_Vanuatu.svg" },
+                { country: "Кирибати", src: "https://upload.wikimedia.org/wikipedia/commons/d/d3/Flag_of_Kiribati.svg" },
+                { country: "Микронезия", src: "https://upload.wikimedia.org/wikipedia/commons/e/e4/Flag_of_the_Federated_States_of_Micronesia.svg" },
+                { country: "Маршалловы Острова", src: "https://upload.wikimedia.org/wikipedia/commons/2/2e/Flag_of_the_Marshall_Islands.svg" },
+                { country: "Науру", src: "https://upload.wikimedia.org/wikipedia/commons/3/30/Flag_of_Nauru.svg" },
+                { country: "Тувалу", src: "https://upload.wikimedia.org/wikipedia/commons/3/38/Flag_of_Tuvalu.svg" },
+                { country: "Палау", src: "https://upload.wikimedia.org/wikipedia/commons/4/48/Flag_of_Palau.svg" },
+                { country: "Соломоновы Острова", src: "https://upload.wikimedia.org/wikipedia/commons/7/74/Flag_of_the_Solomon_Islands.svg" }
+            ]
+        };
+
+        function startGame(region) {
+            currentRegion = region;
+            flagList = flags[region];
+            level = 0;
+            currentScore = 0;
+            lives = 3; // Сбрасываем жизни при начале новой игры
+            usedFlags = []; // Очищаем список использованных флагов
+            document.getElementById("menu").style.display = "none";
+            document.getElementById("game").style.display = "block";
+            document.getElementById("game-over").innerText = ""; // Очищаем сообщение о завершении игры
+            document.getElementById("score").innerText = `Очки: ${currentScore} | Жизни: ${lives}`;
+            nextLevel();
+        }
+
+        function nextLevel() {
+            if (lives <= 0) {
+                document.getElementById("game-over").innerText = "Игра завершена!";
+                return;
+            }
+
+            level++;
+            if (level > flagList.length) {
+                level = 1; // Начать заново после последнего флага
+            }
+
+            const availableFlags = flagList.filter(flag => !usedFlags.includes(flag.src));
+            if (availableFlags.length === 0) {
+                document.getElementById("game-over").innerText = "Флаги закончились! Игра завершена.";
+                return;
+            }
+
+            const randomIndex = Math.floor(Math.random() * availableFlags.length);
+            const currentFlag = availableFlags[randomIndex];
+            usedFlags.push(currentFlag.src); // Добавляем флаг в список использованных
+            flagName = currentFlag.country;
+            document.getElementById("flag").src = currentFlag.src;
+
+            const options = generateOptions(flagName);
+            displayOptions(options);
+        }
+
+        function generateOptions(correctAnswer) {
+            let options = [correctAnswer];
+            while (options.length < 4) {
+                const randomFlag = flagList[Math.floor(Math.random() * flagList.length)].country;
+                if (!options.includes(randomFlag)) {
+                    options.push(randomFlag);
+                }
+            }
+
+            options = shuffle(options);
+            return options;
+        }
+
+        function shuffle(array) {
+            for (let i = array.length - 1; i > 0; i--) {
+                const j = Math.floor(Math.random() * (i + 1));
+                [array[i], array[j]] = [array[j], array[i]];
+            }
+            return array;
+        }
+
+        function displayOptions(options) {
+            const optionsContainer = document.getElementById("options");
+            optionsContainer.innerHTML = "";
+            options.forEach(option => {
+                const button = document.createElement("button");
+                button.textContent = option;
+                button.onclick = () => checkAnswer(option);
+                optionsContainer.appendChild(button);
+            });
+        }
+
+        function checkAnswer(answer) {
+            const correctAnswer = flagName;
+            const buttons = document.getElementById("options").getElementsByTagName("button");
+
+            // Подсветка правильного и неправильного ответа
+            for (let button of buttons) {
+                if (button.innerText === correctAnswer) {
+                    button.classList.add("correct");
+                } else if (button.innerText === answer) {
+                    button.classList.add("incorrect");
+                }
+            }
+
+            if (answer === correctAnswer) {
+                currentScore++;
+                document.getElementById("score").innerText = `Очки: ${currentScore} | Жизни: ${lives}`;
+            } else {
+                lives--;
+                document.getElementById("score").innerText = `Очки: ${currentScore} | Жизни: ${lives}`;
+                if (lives <= 0) {
+                    document.getElementById("game-over").innerText = "Игра завершена!";
+                }
+            }
+
+            setTimeout(nextLevel, 1000);
+        }
+
+        function returnToMenu() {
+            // Сбрасываем данные игры
+            currentScore = 0;
+            lives = 3;
+            usedFlags = []; // Очищаем список использованных флагов
+            document.getElementById("menu").style.display = "flex";
+            document.getElementById("game").style.display = "none";
         }
     </script>
 </body>
